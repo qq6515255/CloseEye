@@ -1,24 +1,15 @@
 <template>
   <div id="app">
-    {{isPause}} - {{name}}
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+     <keep-alive>
+      <router-view/>
+    </keep-alive>
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
+
 export default {
   computed: {
-    test(){
-      return 1
-    },
-    ...mapState({
-      isPause:'isPause',
-      name:'name'
-    })
   },
 }
 </script>

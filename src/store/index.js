@@ -1,31 +1,27 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 // 模块1
-const modulea={
+const moduleA = {
   state: {
-    isPause:true,
-    name:'sb'
+    dayCoverShow: false
   },
-  getters:{
-    test(){
-      
+  getters: {
+    getdayCoverShow(state) {
+      return state.dayCoverShow;
     }
   },
   mutations: {
-    getisPause(){
-      window.console.log(this.isPause);
+    setdayCoverShow(state, value) {
+      state.dayCoverShow = value;
     }
   },
-  actions: {
-  },
-  modules: {
-  }
-}
+  actions: {}
+};
 
 export default new Vuex.Store({
-  modules:{
-    a:modulea,
+  modules: {
+    a: moduleA
   }
-})
+});

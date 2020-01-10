@@ -5,6 +5,7 @@
       v-for="(item, index) in listData.list"
       :key="index"
       :listInfo="item"
+      :class="{ mini: ismini && index > 0 }"
     ></home-list-item>
   </div>
 </template>
@@ -14,15 +15,36 @@
 import HomeListItem from "../home/HomeListItem.vue";
 export default {
   props: {
-    listData: null
+    listData: null,
+    type: null
   },
   components: {
     HomeListItem
+  },
+  computed: {
+    ismini() {
+      if (this.type === "hot") {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.home-list {
+  overflow: hidden;
+}
+.mini {
+  height: 130px;
+  float: left;
+  width: 50vw !important;
+  .title {
+    font-size: 12px ;
+  }
+}
 .title {
   width: 100%;
   height: 7vh;

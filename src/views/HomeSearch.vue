@@ -1,5 +1,5 @@
 <template>
-  <div class="main bgc">
+  <div class="Searchmain bgc">
     <div class="input">
       <form action="/">
         <van-search
@@ -20,9 +20,28 @@
     <!-- 结果的词条 -->
     <template v-if="isResultshow">
       <div class="result-box">
-        <div class="nav"></div>
+        <div class="nav">
+          <van-dropdown-menu class="bgc" active-color="#e2e2e2">
+            <van-dropdown-item v-model="value1" :options="option1" />
+            <van-dropdown-item v-model="value2" :options="option2" />
+            <!-- <van-dropdown-item v-model="value3" :options="option3" /> -->
+          </van-dropdown-menu>
+        </div>
         <div class="result">
-          <h3 class="title" v-if="showtitle">{{ resultList.msg }}</h3>
+          <h3 class="title-error" v-if="showtitle">{{ resultList.msg }}</h3>
+          <h3 class="total" v-if="!showtitle">{{ resultList.data.result.total }} 个相关影片</h3>
+          <van-list
+            v-if="loadList !== null && resultList.data.result"
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多了"
+            @load="onLoad"
+            :immediate-check="false"
+            :error.sync="error"
+            error-text="加载失败,点击重试"
+          >
+            <home-list v-for="(item, index) in loadList" :key="index" :listData="item"></home-list>
+          </van-list>
         </div>
       </div>
     </template>
@@ -49,6 +68,8 @@
 
 <script>
 import { getSearch } from "@/api/home";
+import HomeList from "@/components/home/HomeList";
+import { AGENT } from "@/api/base";
 export default {
   created() {
     let localData = localStorage.getItem("HomeSearchHistory");
@@ -66,10 +87,44 @@ export default {
     },
 
     showtitle() {
+
+      if(this.resultList==null){
+        return false; 
+      }
+
       if (this.resultList.msg !== "ok") {
         return true;
       } else {
         return false;
+      }
+    },
+    option1() {
+      if (this.resultList !== null) {
+        let iteamlist = this.resultList.data.filter.type;
+        let list = iteamlist.map(item => {
+          return { text: item.key, value: item.value };
+        });
+        return list;
+      } else {
+        return [];
+      }
+    },
+    option2() {
+      if (this.resultList !== null) {
+        let iteamlist = this.resultList.data.order;
+        let list = iteamlist.map(item => {
+          return { text: item.key, value: item.value };
+        });
+        return list;
+      } else {
+        return [];
+      }
+    },
+    nextUrl() {
+      if (this.loadList.length>0) {
+        return (AGENT + this.loadList[this.loadList.length - 1].next_page_url_full)
+      } else {
+        return null;
       }
     }
   },
@@ -79,10 +134,31 @@ export default {
       resultList: null,
       hotWord: null,
       historyList: null,
-      control: true
+      control: true,
+      loadList: [],
+      error: false,
+      loading: false,
+      finished: false,
+      value1: "post",
+      value2: "default",
+      value3: 0
     };
   },
   methods: {
+        onLoad() {
+      window.console.log("load");
+      this.axios(this.nextUrl).then(res => {
+        if (res.data.data !== undefined) {
+          window.console.log("加载数据", res.data.data);
+          this.loadList.push(res.data.data.result);
+          this.loading = false;
+        } else {
+          window.console.log("flase===>", this.nextUrl);
+          this.loading = false;
+          this.error = true;
+        }
+      });
+    },
     onSearch() {
       let index = this.historyList.indexOf(this.value);
       if (index === -1) {
@@ -95,11 +171,12 @@ export default {
       getSearch(this.value).then(res => {
         if (res.status === 200 && res.data !== null) {
           this.resultList = res.data;
+          this.loadList.push(res.data.data.result);
           // 控制开关
           if (this.resultList.msg !== "ok") {
-            this.control=true;
-          }else{
-            this.control=false;
+            this.control = true;
+          } else { 
+            this.control = false;
           }
         }
       });
@@ -119,23 +196,28 @@ export default {
     value() {
       if (this.value === "" || this.value === null) {
         this.resultList = null;
-        this.control=true;
+        this.control = true;
+        this.value1 = "post";
+        this.value2 = "default";
+        this.loadList = [];
       }
     }
+  },
+  components:{
+    HomeList
   }
 };
 </script>
 
 <style lang="less">
 .bgc {
-  background-color: #1a1a1a;
+  background-color: #1a1a1a !important;
 }
-.main {
+.Searchmain {
   overflow: hidden;
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
   .input {
-    margin-bottom: 20px;
     padding: 8px;
   }
   .van-search {
@@ -148,7 +230,7 @@ export default {
       background-color: #3e3d3d !important;
     }
     .van-field__control {
-      color: #a7a7a7 !important;
+      color: #e2e2e2 !important;
     }
     .van-search__action {
       color: #a7a7a7;
@@ -198,15 +280,50 @@ export default {
       }
     }
   }
+  .result-box {
+    .nav {
+      height: 51px;
+      border-bottom: 1px solid #a7a7a730;
+      .van-dropdown-item__option {
+        background-color: #1a1a1a;
+        color: #b6b6b6;
+        &::after {
+          border: none;
+        }
+        border-bottom: 0px solid #ebedf0;
+        padding: 15px;
+      }
+      .van-dropdown-item__option--active {
+        background-color: #272727;
+      }
+      .van-dropdown-menu {
+        .van-dropdown-menu__title {
+          font-size: 14px;
+          color: #a7a7a7;
+        }
+        &::after {
+          border: none;
+        }
+      }
+    }
+  }
   .result {
     text-align: center;
     font-size: 12px;
     color: white;
-    .title {
+    .title-error {
       padding: 100px, 50px;
       text-align: center;
       font-size: 12px;
       color: white;
+    }
+    .total {
+      width: 100%;
+      padding: 2vh 5vw;
+      font-size: 5px;
+      text-align: left;
+      font-size: 12px;
+      color: #a7a7a7;
     }
   }
 }

@@ -7,6 +7,7 @@ const moduleA = {
   state: {
     dayCoverShow: false,
     nextHomeUrl:'',
+    playerData:{},
   },
   getters: {
     getdayCoverShow(state) {
@@ -15,11 +16,18 @@ const moduleA = {
     getnextHomeUrl(state) {
       return state.dayCoverShow;
     },
+    getplayerData(state) {
+      return state.playerData;
+    },
 
   },
   mutations: {
     setdayCoverShow(state, value) {
       state.dayCoverShow = value;
+    },
+ 
+    setplayerData(state, obj) {
+      state.playerData = obj;
     },
  
   },

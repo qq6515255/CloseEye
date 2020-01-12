@@ -9,6 +9,9 @@ import Home from "../views/Home.vue";
 import HomeChannel from "../views/HomeChannel.vue";
 import More from "../views/More";
 import HomeSearch from "../views/HomeSearch.vue";
+import ListSearch from "../views/ListSearch.vue";
+import Player from "../views/Player.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -26,26 +29,44 @@ const routes = [
       {
         path: "/recommend",
         component: HomeRecommend,
-        meta:{index:1},
+        meta: { index: 1 }
       },
       {
         path: "/channel",
         component: HomeChannel,
-        meta:{index:2},
+        meta: { index: 2 }
       },
       {
         path: "/more",
         component: More,
-        meta:{index:3},
-      },
+        meta: { index: 3 }
+      }
     ]
   },
   {
     path: "/search",
     name: "search",
-    component: HomeSearch
+    component: HomeSearch,
+    meta: { index: 0 }
   },
-
+  {
+    path: "/listSearch",
+    name: "listSearch",
+    component: ListSearch,
+    meta: { index: 0 },
+    props: route => ({
+      getdata: route.query.data,
+      listName: route.query.name,
+      type: route.query.type,
+      keywor: route.query.key
+    })
+  },
+  {
+    path: "/player",
+    name: "player",
+    component: Player,
+    meta: { index: 0 }
+  },
 ];
 
 const router = new VueRouter({

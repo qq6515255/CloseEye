@@ -26,13 +26,18 @@ import { getTypeListbyTab, getTypeListbyid } from "@/api/home";
 export default {
   created() {
     // if (this.$route.query.data !== null) {
-      // this.type = this.$route.query.type;
-      // window.console.log(this.$route.query.data);
-      // this.loadList.push({ list: this.$route.query.data.data });
-      // this.listNmae = this.$route.query.name;
-      // this.type = this.$route.query.type;
-      // this.key = this.$route.query.key;
-      
+    // this.type = this.$route.query.type;
+    // window.console.log(this.$route.query.data);
+    // this.loadList.push({ list: this.$route.query.data.data });
+    // this.listNmae = this.$route.query.name;
+    // this.type = this.$route.query.type;
+    // this.key = this.$route.query.key;
+    
+    this.loadList.push({ list: this.getdata.data });
+    this.$nextTick(() => {
+      window.scrollTo(0, 0);
+    });
+
     // }
   },
   methods: {
@@ -76,21 +81,19 @@ export default {
     };
   },
   props: {
-    getdata:null,
-    listName:null,
-    type:null,
-    keywor:null
+    getdata: null,
+    listName: null,
+    type: null,
+    keywor: null
   },
   watch: {
-    
-    keywor(newkey,oldkey){
-      
-      if (newkey===oldkey){
-        return
-      }else{
-      this.loadList=[];  
-      this.loadList.push({ list: this.getdata.data });
-      this.page++;
+    keywor(newkey, oldkey) {
+      if (newkey === oldkey) {
+        return;
+      } else {
+        this.loadList = [];
+        this.loadList.push({ list: this.getdata.data });
+        this.page++;
       }
     }
   },

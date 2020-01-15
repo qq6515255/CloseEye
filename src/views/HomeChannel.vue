@@ -21,8 +21,12 @@ export default {
     if (localData === null) {
       getChannel().then(res => {
         if (res.status === 200 && res.data.data !== null) {
-          window.console.log(res.data.data);
-          this.listdata = res.data.data;
+          window.console.log(res.data.data); 
+          this.listdata =res.data.data;
+          // 清除类型1的4个
+          // this.listdata = res.data.data.filter(e=>{
+          //   return e.cate_type==0;
+          // });
           localStorage.setItem("HomeChannel", JSON.stringify(this.listdata));
         }
       });
@@ -42,6 +46,7 @@ export default {
       this.loading = true;
       if (item.cateid === undefined) {
         getTypeListbyTab(item.tab).then(res => {
+          // window.console.log(res.data,'data')
           if (res !== null) {
             let data = res.data;
             this.loading = false;
@@ -53,6 +58,7 @@ export default {
         });
       } else {
         getTypeListbyid(item.cateid).then(res => {
+          window.console.log(res.data,'data')
           if (res !== null) {
             let data = res.data;
             this.loading = false;

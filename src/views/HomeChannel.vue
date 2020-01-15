@@ -1,15 +1,17 @@
 <template>
-  <div class="main">
-    <channel-item
-      v-for="(item, index) in listdata"
-      :key="index"
-      :itemData="item"
-      @click.native="enterList(item)"
-    ></channel-item>
-    <van-overlay :show="loading===true" z-index=999 duration=0.5 >
-      <van-loading class="fix" color="#1989fa" />
-    </van-overlay>
-  </div>
+  <v-touch v-on:swipeleft="swiperleft" v-on:swiperight="swiperright" class="wrapper">
+    <div class="main menu-container" ref="menuContainer">
+      <channel-item
+        v-for="(item, index) in listdata"
+        :key="index"
+        :itemData="item"
+        @click.native="enterList(item)"
+      ></channel-item>
+      <van-overlay :show="loading === true" z-index="999" duration="0.5">
+        <van-loading class="fix" color="#1989fa" />
+      </van-overlay>
+    </div>
+  </v-touch>
 </template>
 <script>
 import { getChannel, getTypeListbyTab, getTypeListbyid } from "@/api/home";
@@ -21,8 +23,8 @@ export default {
     if (localData === null) {
       getChannel().then(res => {
         if (res.status === 200 && res.data.data !== null) {
-          window.console.log(res.data.data); 
-          this.listdata =res.data.data;
+          window.console.log(res.data.data);
+          this.listdata = res.data.data;
           // 清除类型1的4个
           // this.listdata = res.data.data.filter(e=>{
           //   return e.cate_type==0;
@@ -58,7 +60,7 @@ export default {
         });
       } else {
         getTypeListbyid(item.cateid).then(res => {
-          window.console.log(res.data,'data')
+          window.console.log(res.data, "data");
           if (res !== null) {
             let data = res.data;
             this.loading = false;
@@ -69,6 +71,14 @@ export default {
           }
         });
       }
+    },
+    swiperleft: function() {
+      window.console.log("right");
+      this.$router.push({ path: "/more" });
+    },
+    swiperright: function() {
+      window.console.log("left");
+      this.$router.push({ path: "/recommend" });
     }
   },
   components: {
@@ -78,11 +88,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.fix{
+.fix {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 }
 .main {
   overflow: hidden;

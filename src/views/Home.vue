@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" :class="{'unsliding':getdayCoverShow}">
     <nav-bar :navBgc="'black'">
       <van-icon slot="left" name="notes-o" class="notes-o" @click="openCover" aria-hidden="true" />
 
@@ -99,6 +99,11 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.unsliding{
+  height: 100vh;
+  widows: 100vw;
+  overflow: hidden;
+}
 .home {
   background-color: #1a1a1a;
   min-height: 100vh;

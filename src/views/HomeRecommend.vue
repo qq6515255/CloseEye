@@ -1,57 +1,59 @@
 <template>
-  <div class="main" v-if="indexDate !== null">
-    <div class="content">
-      <van-swipe :autoplay="4000" @change="onChange" indicator-color="white">
-        <van-swipe-item v-for="(item, index) in indexDate.banner.list" :key="index">
-          <img :src="item.image" />
-        </van-swipe-item>
-        
-        <ul class="custom-indicator" slot="indicator">
-          <li
-            v-for="(item, index) in indexDate.banner.list"
-            :key="index"
-            :class="{ active: current === index }"
-          ></li>
-        </ul>
-      </van-swipe>
-    </div>
-    <home-list :listData="indexDate.today"></home-list>
-    <!--  专题推荐 -->
-    <div class="album" v-if="indexDate.album !== null">
-      <div class="title" v-if="indexDate.album.selection_title !== null">
-        {{ indexDate.album.selection_title }}
+  <v-touch v-on:swipeleft="swiperleft" v-on:swiperight="swiperright" class="wrapper">
+    <div class="main menu-container" ref="menuContainer" v-if="indexDate !== null">
+      <div class="content">
+        <van-swipe :autoplay="4000" @change="onChange" indicator-color="white">
+          <van-swipe-item v-for="(item, index) in indexDate.banner.list" :key="index">
+            <img :src="item.image" />
+          </van-swipe-item>
+
+          <ul class="custom-indicator" slot="indicator">
+            <li
+              v-for="(item, index) in indexDate.banner.list"
+              :key="index"
+              :class="{ active: current === index }"
+            ></li>
+          </ul>
+        </van-swipe>
       </div>
-      <van-swipe :autoplay="4000" @change="onAlbumChange" indicator-color="white">
-        <van-swipe-item v-for="(item, index) in indexDate.album.list" :key="index">
-          <home-list-item :listInfo="item"></home-list-item>
-        </van-swipe-item>
+      <home-list :listData="indexDate.today"></home-list>
+      <!--  专题推荐 -->
+      <div class="album" v-if="indexDate.album !== null">
+        <div class="title" v-if="indexDate.album.selection_title !== null">
+          {{ indexDate.album.selection_title }}
+        </div>
+        <van-swipe :autoplay="4000" @change="onAlbumChange" indicator-color="white">
+          <van-swipe-item v-for="(item, index) in indexDate.album.list" :key="index">
+            <home-list-item :listInfo="item"></home-list-item>
+          </van-swipe-item>
 
-        <ul class="custom-indicator" slot="indicator">
-          <li
-            v-for="index in indexDate.album.list.length"
-            :key="index"
-            :class="{ active: albumCurrent === index - 1 }"
-          ></li>
-        </ul>
-      </van-swipe>
+          <ul class="custom-indicator" slot="indicator">
+            <li
+              v-for="index in indexDate.album.list.length"
+              :key="index"
+              :class="{ active: albumCurrent === index - 1 }"
+            ></li>
+          </ul>
+        </van-swipe>
+      </div>
+
+      <home-list :listData="indexDate.hot" :type="'hot'"></home-list>
+
+      <!-- <home-list :listData="indexDate.album"></home-list> -->
+      <van-list
+        v-if="loadList !== null && indexDate.today"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+        :immediate-check="false"
+        :error.sync="error"
+        error-text="加载失败,点击重试"
+      >
+        <home-list v-for="(item, index) in loadList" :key="index" :listData="item"></home-list>
+      </van-list>
     </div>
-
-    <home-list :listData="indexDate.hot" :type="'hot'"></home-list>
-
-    <!-- <home-list :listData="indexDate.album"></home-list> -->
-    <van-list
-      v-if="loadList !== null && indexDate.today"
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
-      :immediate-check="false"
-      :error.sync="error"
-      error-text="加载失败,点击重试"
-    >
-      <home-list v-for="(item, index) in loadList" :key="index" :listData="item"></home-list>
-    </van-list>
-  </div>
+  </v-touch>
 </template>
 
 <script>
@@ -110,6 +112,16 @@ export default {
           this.error = true;
         }
       });
+    },
+    swiperleft: function() {
+      // this.$router.push({ path: "/queuehistory" });
+      window.console.log('right');
+      this.$router.push({ path: "/channel" });
+      
+    },
+    swiperright: function() {
+      
+      window.console.log('left');
     }
   },
   components: {
@@ -122,7 +134,6 @@ export default {
 <style lang="less" scoped>
 .content {
   overflow: hidden;
-  
 }
 .main {
   position: relative;

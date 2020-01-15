@@ -69,13 +69,13 @@ export default {
     height: 100%;
     position: absolute;
     width: 100%;
-    z-index: -10;
+    z-index: 2;
   }
   .img-list {
     height: 100%;
     position: absolute;
     width: 100%;
-    z-index: -200;
+    z-index: 1;
     img {
       &.hidden {
         display: none;
@@ -97,6 +97,7 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+  z-index: 2;
   .enter{
     position: absolute;
     top: 70%;

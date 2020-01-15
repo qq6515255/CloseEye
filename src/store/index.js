@@ -6,8 +6,8 @@ Vue.use(Vuex);
 const moduleA = {
   state: {
     dayCoverShow: false,
-    nextHomeUrl:'',
-    playerData:{},
+    nextHomeUrl: "",
+    playerData: {}
   },
   getters: {
     getdayCoverShow(state) {
@@ -18,18 +18,22 @@ const moduleA = {
     },
     getplayerData(state) {
       return state.playerData;
-    },
-
+    }
   },
   mutations: {
     setdayCoverShow(state, value) {
       state.dayCoverShow = value;
     },
- 
+
     setplayerData(state, obj) {
-      state.playerData = obj;
-    },
- 
+      if (obj !== undefined) {
+        state.playerData = obj;
+        localStorage.setItem("playerData", JSON.stringify(state.playerData));
+      }else{
+        let localData = localStorage.getItem("playerData");
+        state.playerData = localData ? JSON.parse(localData) : {};
+      }
+    }
   },
   actions: {
     // postIndexDate(context) {

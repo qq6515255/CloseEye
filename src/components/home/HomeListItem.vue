@@ -47,8 +47,9 @@ export default {
         this.loading = false;
         window.console.log(res);
         if (res.status === 200 && res.data.data !== null) {
-          this.$store.commit("setplayerData", res.data.data);
+          this.$store.commit("setplayerData", res.data.data );
           this.$router.push("player");
+          // this.$router.push({path:'player',query:{'setplayerData':res.data.data}});
         }
       });
     }

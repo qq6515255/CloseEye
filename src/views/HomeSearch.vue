@@ -18,39 +18,46 @@
     </div>
 
     <!-- 结果的词条 -->
-    <template v-if="isResultshow">
-      <div class="result-box">
-        <div class="nav">
-          <van-dropdown-menu class="bgc" active-color="#e2e2e2">
-            <van-dropdown-item v-model="value1" :options="option1" />
-            <van-dropdown-item v-model="value2" :options="option2" />
-            <!-- <van-dropdown-item v-model="value3" :options="option3" /> -->
-          </van-dropdown-menu>
+    <transition name="fade">
+      <template v-if="isResultshow">
+        <div class="result-box">
+          <div class="nav">
+            <van-dropdown-menu class="bgc" active-color="#e2e2e2">
+              <van-dropdown-item v-model="value1" :options="option1" />
+              <van-dropdown-item v-model="value2" :options="option2" />
+              <!-- <van-dropdown-item v-model="value3" :options="option3" /> -->
+            </van-dropdown-menu>
+          </div>
+          <div class="result">
+            <h3 class="title-error" v-if="showtitle">{{ resultList.msg }}</h3>
+            <h3 class="total" v-if="!showtitle">{{ resultList.data.result.total }} 个相关影片</h3>
+            <van-list
+              v-if="loadList !== null && resultList.data.result"
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad"
+              :immediate-check="false"
+              :error.sync="error"
+              error-text="加载失败,点击重试"
+            >
+              <home-list
+                v-for="(item, index) in loadList"
+                :key="index"
+                :listData="item"
+              ></home-list>
+            </van-list>
+          </div>
         </div>
-        <div class="result">
-          <h3 class="title-error" v-if="showtitle">{{ resultList.msg }}</h3>
-          <h3 class="total" v-if="!showtitle">{{ resultList.data.result.total }} 个相关影片</h3>
-          <van-list
-            v-if="loadList !== null && resultList.data.result"
-            v-model="loading"
-            :finished="finished"
-            finished-text="没有更多了"
-            @load="onLoad"
-            :immediate-check="false"
-            :error.sync="error"
-            error-text="加载失败,点击重试"
-          >
-            <home-list v-for="(item, index) in loadList" :key="index" :listData="item"></home-list>
-          </van-list>
-        </div>
-      </div>
-    </template>
-
+      </template>
+    </transition>
     <div class="control" v-show="control">
       <div class="hotwords">
         <h3 class="title">热门搜索</h3>
         <ul class="keywords" v-if="hotWord !== null">
-          <li v-for="(item, index) in hotWord" :key="index">{{ item.kw }}</li>
+          <li v-for="(item, index) in hotWord" :key="index" @click="onItemClick(item.kw)">
+            {{ item.kw }}
+          </li>
         </ul>
       </div>
 
@@ -59,7 +66,9 @@
           搜索历史 <span class="clear" @click="clearHistory">清除<van-icon name="delete"/></span>
         </p>
         <ul class="keywords" v-if="historyList !== null">
-          <li v-for="(item, index) in historyList" :key="index">{{ item }}</li>
+          <li v-for="(item, index) in historyList" :key="index" @click="onItemClick(item)">
+            {{ item }}
+          </li>
         </ul>
       </div>
     </div>
@@ -87,9 +96,8 @@ export default {
     },
 
     showtitle() {
-
-      if(this.resultList==null){
-        return false; 
+      if (this.resultList == null) {
+        return false;
       }
 
       if (this.resultList.msg !== "ok") {
@@ -121,8 +129,8 @@ export default {
       }
     },
     nextUrl() {
-      if (this.loadList.length>0) {
-        return (AGENT + this.loadList[this.loadList.length - 1].next_page_url_full)
+      if (this.loadList.length > 0) {
+        return AGENT + this.loadList[this.loadList.length - 1].next_page_url_full;
       } else {
         return null;
       }
@@ -145,19 +153,20 @@ export default {
     };
   },
   methods: {
-        onLoad() {
-      window.console.log("load");
-      this.axios(this.nextUrl).then(res => {
-        if (res.data.data !== undefined) {
-          window.console.log("加载数据", res.data.data);
-          this.loadList.push(res.data.data.result);
-          this.loading = false;
-        } else {
-          window.console.log("flase===>", this.nextUrl);
-          this.loading = false;
-          this.error = true;
-        }
-      });
+    onLoad() {
+      if (this.nextUrl !== null) {
+        this.axios(this.nextUrl).then(res => {
+          if (res.data.data !== undefined) {
+            window.console.log("加载数据", res.data.data);
+            this.loadList.push(res.data.data.result);
+            this.loading = false;
+          } else {
+            window.console.log("flase===>", this.nextUrl);
+            this.loading = false;
+            this.error = true;
+          }
+        });
+      }
     },
     onSearch() {
       let index = this.historyList.indexOf(this.value);
@@ -171,11 +180,13 @@ export default {
       getSearch(this.value).then(res => {
         if (res.status === 200 && res.data !== null) {
           this.resultList = res.data;
-          this.loadList.push(res.data.data.result);
+          if (res.data.data.result !== undefined) {
+            this.loadList.push(res.data.data.result);
+          }
           // 控制开关
           if (this.resultList.msg !== "ok") {
             this.control = true;
-          } else { 
+          } else {
             this.control = false;
           }
         }
@@ -187,6 +198,10 @@ export default {
     },
     clearHistory() {
       this.historyList = [];
+    },
+    onItemClick(e) {
+      this.value = e;
+      this.onSearch();
     }
   },
   watch: {
@@ -203,7 +218,7 @@ export default {
       }
     }
   },
-  components:{
+  components: {
     HomeList
   }
 };
@@ -326,5 +341,12 @@ export default {
       color: #a7a7a7;
     }
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="main">asd</div>
+  <div class="main">等待开发啊同学</div>
 </template>
 
 <script>
@@ -8,6 +8,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang='less' scoped>
+.main{
+  color: white;
+}
 </style>

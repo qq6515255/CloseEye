@@ -1,26 +1,32 @@
 <template>
   <div id="app">
-     <keep-alive>
-      <router-view/>
-    </keep-alive>
+    <transition
+      mode="out-in"
+      enter-active-class="animated fadeIn"
+      leave-active-class="animated fadeOut"
+    >
+      <keep-alive>
+        <router-view class="animated" animate-duration=".1s" />
+      </keep-alive>
+    </transition>
   </div>
 </template>
 <script>
 // import { mapState } from 'vuex'
 
 export default {
-  computed: {
-  },
-}
+  computed: {}
+};
 </script>
-<style scoped>
+<style>
+.animated {animation-duration: 0.5s;}
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  
+  background-color: #1a1a1a;
 }
 
 #nav {

@@ -5,6 +5,7 @@
         <van-swipe-item v-for="(item, index) in indexDate.banner.list" :key="index">
           <img :src="item.image" />
         </van-swipe-item>
+        
         <ul class="custom-indicator" slot="indicator">
           <li
             v-for="(item, index) in indexDate.banner.list"
@@ -142,6 +143,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   overflow: hidden;
+  height: 2px;
   padding: 0px 5px;
   li {
     float: left;

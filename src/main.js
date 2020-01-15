@@ -5,12 +5,12 @@ import store from './store'
 import './vant'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import animated from 'animate.css' 
 
 
 
 
-
-Vue.use(VueAxios, axios)
+Vue.use(VueAxios, axios,animated)
 Vue.config.productionTip = false
 
 new Vue({

@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <nav-bar :navBgc="'black'">
-      <span slot="left" class="fa fa-calendar-minus-o" @click="openCover" aria-hidden="true"></span>
+      <van-icon slot="left" name="notes-o" class="notes-o" @click="openCover" aria-hidden="true" />
+
       <ul class="nav-iteam" slot="center">
         <li>
           <router-link to="/recommend">发现</router-link>
@@ -13,13 +14,19 @@
           <router-link to="/more">日报</router-link>
         </li>
       </ul>
-      <router-link to="/search" slot="right"> 
-        <van-icon class="search" name="search"/>
+      <router-link to="/search" slot="right">
+        <van-icon class="search" name="search" />
       </router-link>
     </nav-bar>
 
     <keep-alive>
-      <router-view></router-view>
+      <transition
+         mode="out-in" 
+        :enter-active-class="'animated '+ transitionInName"
+        :leave-active-class="'animated '+ transitionOutName"
+      >
+        <router-view></router-view>
+      </transition>
     </keep-alive>
 
     <transition name="fade">
@@ -51,7 +58,8 @@ export default {
     return {
       dayCoverInfo: null,
       indexInfo: null,
-      transitionName: null
+      transitionInName: null,
+      transitionOutName: null
     };
   },
   computed: {
@@ -71,30 +79,34 @@ export default {
     //     window.console.log(res);
     //   }
     // });
+  },
+  watch: {
+    //使用watch 监听$router的变化
+    $route(to, from) {
+      // window.console.log("to.meta.index==>", to.meta.index);
+      // window.console.log("from.meta.index==>", from.meta.index);
+      //如果to索引大于from索引,判断为前进状态,反之则为后退状态
+      if (to.meta.index > from.meta.index) {
+        //设置动画名称
+        this.transitionInName = "fadeInRight";
+        this.transitionOutName = "fadeOutLeft";
+      } else {
+        this.transitionInName = "fadeInLeft";
+        this.transitionOutName = "fadeOutRight";
+      }
+    }
   }
-  // watch: {
-  //   //使用watch 监听$router的变化
-  //   $route(to, from) {
-  //     window.console.log("to.meta.index==>", to.meta.index);
-  //     window.console.log("from.meta.index==>", from.meta.index);
-  //     //如果to索引大于from索引,判断为前进状态,反之则为后退状态
-  //     if (to.meta.index > from.meta.index) {
-  //       //设置动画名称
-
-  //       this.transitionName = "slide-left";
-  //     } else {
-  //       this.transitionName = "slide-right";
-  //     }
-  //   }
-  // }
 };
 </script>
 <style lang="less" scoped>
 .home {
-  background-color: #1A1A1A;
+  background-color: #1a1a1a;
+  min-height: 100vh;
 }
-.fa-calendar-minus-o {
+.notes-o {
   color: white;
+  font-size: 20px;
+  vertical-align: middle;
 }
 .search {
   color: white;

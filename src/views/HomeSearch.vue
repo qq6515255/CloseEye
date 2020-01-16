@@ -1,78 +1,85 @@
 <template>
-  <div class="Searchmain bgc">
-    <div class="input">
-      <form action="/">
-        <van-search
-          v-model.trim="value"
-          placeholder="请输入搜索关键词"
-          show-action
-          @search="onSearch"
-          @cancel="onCancel"
-          :clearable="false"
-          :autofocus="true"
-          background="#1A1A1A"
-        >
-          <van-icon name="search" slot="left-icon" />
-        </van-search>
-      </form>
-    </div>
+  <v-touch
+    v-on:swipeleft="swiperleft"
+    v-on:swiperight="swiperright"
+    class="wrapper"
+    :swipe-options="{ direction: 'horizontal' }"
+  >
+    <div class="Searchmain bgc menu-container" ref="menuContainer">
+      <div class="input">
+        <form action="/">
+          <van-search
+            v-model.trim="value"
+            placeholder="请输入搜索关键词"
+            show-action
+            @search="onSearch"
+            @cancel="onCancel"
+            :clearable="false"
+            :autofocus="true"
+            background="#1A1A1A"
+          >
+            <van-icon name="search" slot="left-icon" />
+          </van-search>
+        </form>
+      </div>
 
-    <!-- 结果的词条 -->
-    <transition name="fade">
-      <template v-if="isResultshow">
-        <div class="result-box">
-          <div class="nav">
-            <van-dropdown-menu class="bgc" active-color="#e2e2e2">
-              <van-dropdown-item v-model="value1" :options="option1" />
-              <van-dropdown-item v-model="value2" :options="option2" />
-              <!-- <van-dropdown-item v-model="value3" :options="option3" /> -->
-            </van-dropdown-menu>
+      <!-- 结果的词条 -->
+      <transition name="fade">
+        <template v-if="isResultshow">
+          <div class="result-box">
+            <div class="nav">
+              <van-dropdown-menu class="bgc" active-color="#e2e2e2">
+                <van-dropdown-item v-model="value1" :options="option1" />
+                <van-dropdown-item v-model="value2" :options="option2" />
+                <!-- <van-dropdown-item v-model="value3" :options="option3" /> -->
+              </van-dropdown-menu>
+            </div>
+            <div class="result">
+              <h3 class="title-error" v-if="showtitle">{{ resultList.msg }}</h3>
+              <h3 class="total" v-if="!showtitle">{{ resultList.data.result.total }} 个相关影片</h3>
+              <van-list
+                v-if="loadList !== null && resultList.data.result"
+                v-model="loading"
+                :finished="finished"
+                finished-text="没有更多了"
+                @load="onLoad"
+                :immediate-check="false"
+                :error.sync="error"
+                error-text="加载失败,点击重试"
+              >
+                <home-list
+                  v-for="(item, index) in loadList"
+                  :key="index"
+                  :listData="item"
+                ></home-list>
+              </van-list>
+            </div>
           </div>
-          <div class="result">
-            <h3 class="title-error" v-if="showtitle">{{ resultList.msg }}</h3>
-            <h3 class="total" v-if="!showtitle">{{ resultList.data.result.total }} 个相关影片</h3>
-            <van-list
-              v-if="loadList !== null && resultList.data.result"
-              v-model="loading"
-              :finished="finished"
-              finished-text="没有更多了"
-              @load="onLoad"
-              :immediate-check="false"
-              :error.sync="error"
-              error-text="加载失败,点击重试"
-            >
-              <home-list
-                v-for="(item, index) in loadList"
-                :key="index"
-                :listData="item"
-              ></home-list>
-            </van-list>
-          </div>
+        </template>
+      </transition>
+      <div class="control" v-show="control">
+        <div class="hotwords">
+          <h3 class="title">热门搜索</h3>
+          <ul class="keywords" v-if="hotWord !== null">
+            <li v-for="(item, index) in hotWord" :key="index" @click="onItemClick(item.kw)">
+              {{ item.kw }}
+            </li>
+          </ul>
         </div>
-      </template>
-    </transition>
-    <div class="control" v-show="control">
-      <div class="hotwords">
-        <h3 class="title">热门搜索</h3>
-        <ul class="keywords" v-if="hotWord !== null">
-          <li v-for="(item, index) in hotWord" :key="index" @click="onItemClick(item.kw)">
-            {{ item.kw }}
-          </li>
-        </ul>
-      </div>
 
-      <div class="histoyr hotwords">
-        <p class="title">
-          搜索历史 <span class="clear" @click="clearHistory">清除<van-icon name="delete"/></span>
-        </p>
-        <ul class="keywords" v-if="historyList !== null">
-          <li v-for="(item, index) in historyList" :key="index" @click="onItemClick(item)">
-            {{ item }}
-          </li>
-        </ul>
+        <div class="histoyr hotwords">
+          <p class="title">
+            搜索历史 <span class="clear" @click="clearHistory">清除<van-icon name="delete"/></span>
+          </p>
+          <ul class="keywords" v-if="historyList !== null">
+            <li v-for="(item, index) in historyList" :key="index" @click="onItemClick(item)">
+              {{ item }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
+  </v-touch>
 </template>
 
 <script>
@@ -202,6 +209,14 @@ export default {
     onItemClick(e) {
       this.value = e;
       this.onSearch();
+    },
+    swiperleft: function() {
+      window.console.log("right");
+      
+    },
+    swiperright: function() {
+      window.console.log("left");
+      this.$router.back();
     }
   },
   watch: {

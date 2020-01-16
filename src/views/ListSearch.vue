@@ -1,23 +1,30 @@
 <template>
-  <div class="main">
-    <div class="top">
-      <van-icon name="arrow-left" @click="$router.back()" />
-      {{ listName }}
-    </div>
+  <v-touch
+    v-on:swipeleft="swiperleft"
+    v-on:swiperight="swiperright"
+    class="wrapper"
+    :swipe-options="{ direction: 'horizontal' }"
+  >
+    <div class="main menu-container" ref="menuContainer">
+      <div class="top">
+        <van-icon name="arrow-left" @click="$router.back()" />
+        {{ listName }}
+      </div>
 
-    <van-list
-      v-if="loadList !== null"
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
-      :immediate-check="false"
-      :error.sync="error"
-      error-text="加载失败,点击重试"
-    >
-      <home-list v-for="(item, index) in loadList" :key="index" :listData="item"></home-list>
-    </van-list>
-  </div>
+      <van-list
+        v-if="loadList !== null"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+        :immediate-check="false"
+        :error.sync="error"
+        error-text="加载失败,点击重试"
+      >
+        <home-list v-for="(item, index) in loadList" :key="index" :listData="item"></home-list>
+      </van-list>
+    </div>
+  </v-touch>
 </template>
 
 <script>
@@ -32,11 +39,11 @@ export default {
     // this.listNmae = this.$route.query.name;
     // this.type = this.$route.query.type;
     // this.key = this.$route.query.key;
-    
+
     this.loadList.push({ list: this.getdata.data });
-    this.$nextTick(() => {
-      window.scrollTo(0, 0);
-    });
+    // this.$nextTick(() => {
+    //   window.scrollTo(0, 0);
+    // });
 
     // }
   },
@@ -66,6 +73,14 @@ export default {
           }
         });
       }
+    },
+    swiperleft: function() {
+      window.console.log("right");
+      this.$router.push({ path: "/channel" });
+    },
+    swiperright: function() {
+      window.console.log("left");
+      this.$router.push({ path: "/channel" });
     }
   },
   data() {

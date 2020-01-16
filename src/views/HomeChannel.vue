@@ -1,5 +1,10 @@
 <template>
-  <v-touch v-on:swipeleft="swiperleft" v-on:swiperight="swiperright" class="wrapper">
+  <v-touch
+    v-on:swipeleft="swiperleft"
+    v-on:swiperight="swiperright"
+    class="wrapper"
+    :swipe-options="{ direction: 'horizontal' }"
+  >
     <div class="main menu-container" ref="menuContainer">
       <channel-item
         v-for="(item, index) in listdata"
@@ -18,12 +23,14 @@ import { getChannel, getTypeListbyTab, getTypeListbyid } from "@/api/home";
 import ChannelItem from "../components/home/ChannelItem.vue";
 export default {
   created() {
+    this.$nextTick(() => {
+      window.scrollTo(0, 0);
+    });
     let localData = localStorage.getItem("HomeChannel");
     // this.listdata = localData ? JSON.parse(localData) : {};
     if (localData === null) {
       getChannel().then(res => {
         if (res.status === 200 && res.data.data !== null) {
-          window.console.log(res.data.data);
           this.listdata = res.data.data;
           // 清除类型1的4个
           // this.listdata = res.data.data.filter(e=>{

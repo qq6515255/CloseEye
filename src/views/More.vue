@@ -1,5 +1,5 @@
 <template>
-<v-touch v-on:swipeleft="swiperleft" v-on:swiperight="swiperright" class="wrapper">
+<v-touch v-on:swipeleft="swiperleft" v-on:swiperight="swiperright" class="wrapper" :swipe-options="{direction: 'horizontal'}" >
   <div class="main menu-container" ref="menuContainer">等待开发啊同学</div>
   </v-touch>
 </template>

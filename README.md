@@ -1,5 +1,10 @@
 # CloseEye(基于VUE的短视频项目)
 
+## 项目演示地址
+```
+http://junnaix.cn:3001
+```
+
 ## Project setup
 ```
 npm install

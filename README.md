@@ -1,4 +1,4 @@
-# vuex
+# CloseEye(基于VUE的短视频项目)
 
 ## Project setup
 ```
